@@ -25,6 +25,35 @@ App Engine application for the Udacity training course.
 1. Deploy your application.
 
 
+## Tasks
+
+### Task 1
+1. In first phase speaker is a string representing speaker name. In phase 2 speaker will become an entity containing name, age, key etc.
+1. Session is an entity containing all required fields (name, highlights(repeated), speaker(name), duration, typeOfSession, date, startTime)
+1. Endpoints implemented
+    - getConferenceSessions(websafeConferenceKey)
+    - getConferenceSessionsByType(websafeConferenceKey, typeOfSession)
+    - getSessionsBySpeaker(speaker)
+    - createSession(SessionForm, websafeConferenceKey))
+
+### Task 2
+1. Endpoints implemented
+    - addSessionToWishlist(SessionKey)
+    - getSessionsInWishlist()
+
+### Task 3
+1. I've created querySessionT3 endpoint witch supports time and sessionType params. I've solved the problem by enumerating all hours before 7pm. This way I've managed to avoid using 2 inequality filters but several equality ones and a single inequality filter.
+1. Aditional endpoints implemented
+    - getSession(SessionKey) - get session details with provided SessionKey
+    - removeSessionFromWishlist(SessionKey) - remove session from wishlist(just because anyone can make a mistake)
+    - querySessionT3(lastStartTimeHour, unwantedTypeOfSession)
+
+### Task 4
+1. Implement a method that ads speaker and session names to memcache if upon session creation speaker has another session on that conference.
+1. Endpoints implemented
+    - getFeaturedSpeaker()
+
+
 [1]: https://developers.google.com/appengine
 [2]: http://python.org
 [3]: https://developers.google.com/appengine/docs/python/endpoints/

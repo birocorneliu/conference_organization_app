@@ -1,16 +1,5 @@
-#!/usr/bin/env python
-
-"""settings.py
-
-Udacity conference server-side Python App Engine app user settings
-
-$Id$
-
-created/forked from conference.py by wesc on 2014 may 24
-
-"""
-
 # Replace the following lines with client IDs obtained from the APIs
 # Console or Cloud Console.
-WEB_CLIENT_ID = '499131841430-s3qlmuo5dnmnser8sdn3iio6jeeq0kbt.apps.googleusercontent.com'
-
+MESSAGE_FEATURED_SPEAKER = "Speaker '{}' talks in the following sessions: {}"
+MEMCACHE_FEATURED_SPEAKER = "FEATURED_SPEAKER"
+WEB_CLIENT_ID = 'CLIENT_ID'

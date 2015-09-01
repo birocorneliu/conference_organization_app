@@ -4,7 +4,7 @@ from google.appengine.api import memcache
 
 from settings import MESSAGE_FEATURED_SPEAKER, MEMCACHE_FEATURED_SPEAKER
 from lib import models
-from lib.db import Profile, Conference, Session
+from lib.db import Profile, Conference, Session, Speaker
 from lib.utils.shared import getUserId
 
 
@@ -32,6 +32,8 @@ def create_session(data, wsck):
     s_id = Session.allocate_ids(size=1, parent=c_key)[0]
     s_key = ndb.Key(Session, s_id, parent=c_key)
     data['key'] = s_key
+    speaker = get_create_speaker(data["speaker"])
+    data["speaker"] = speaker
     session = Session(**data)
     session.put()
 
@@ -61,6 +63,25 @@ def get_user_conference(user_id, wsck):
         endpoints.UnauthorizedException("Not allowed!")
 
     return conference
+
+
+def get_create_speaker(speaker):
+    if hasattr(speaker, "name"):
+        speaker_key = ndb.Key(Speaker, speaker.name)
+    else:
+        speaker_key = ndb.Key(Speaker, speaker)
+    response = speaker_key.get()
+
+    if not response:
+        response = Speaker(
+            key=speaker_key,
+            name=speaker.name,
+            age=speaker.age,
+            specialization=speaker.specialization
+            )
+        response.put()
+    return response
+
 
 
 def get_create_profile(user):
@@ -143,8 +164,9 @@ def register_to_conference(profile, conference, wsck):
 
 
 def add_session_to_wishlist(profile, wssk):
-    profile.sessionKeysWishlist.append(wssk)
-    profile.put()
+    if wssk not in profile.sessionKeysWishlist:
+        profile.sessionKeysWishlist.append(wssk)
+        profile.put()
     return models.BooleanMessage(data=True)
 
 
@@ -182,18 +204,19 @@ def get_sessions():
     return query.fetch()
 
 
-def get_sessions_by_speaker(speaker):
+def get_sessions_by_speaker(speaker_name):
+    speaker = get_create_speaker(speaker_name)
     query = Session.query()
     query = query.filter(Session.speaker == speaker)
 
     return query
 
 
-def set_memcache(wsck, speaker_name):
+def set_featured_speaker(wsck, speaker_name):
+    speaker = get_create_speaker(speaker_name)
     query = Session.query()
-    query = query.filter(Session.speaker == speaker_name)
+    query = query.filter(Session.speaker == speaker)
     sessions = query.filter(Session.websafeConferenceKey == wsck)
-
     if sessions.count() > 1:
         message = MESSAGE_FEATURED_SPEAKER.format(
             speaker_name,

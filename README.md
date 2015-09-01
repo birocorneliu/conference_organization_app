@@ -28,8 +28,19 @@ App Engine application for the Udacity training course.
 ## Tasks
 
 ### Task 1
-1. In first phase speaker is a string representing speaker name. In phase 2 speaker will become an entity containing name, age, key etc.
-1. Session is an entity containing all required fields (name, highlights(repeated), speaker(name), duration, typeOfSession, date, startTime)
+1. Speaker is an entity that has the `name` as primary key. This was done not to create confusions betwen names when testing and to identify speakers more easly. This will be changed into a generated key. It contains the following fields:
+    - name - StringProperty(required, unique)
+    - age - IntegerProperty
+    - specialization - StringProperty
+1. Session is an entity containing the entity speaker inside it for quick access. All required fields as described below:
+    - name - StringProperty(required)
+    - speaker - StructuredProperty(Speaker)
+    - websafeConferenceKey - StringProperty
+    - startTime - IntegerProperty
+    - duration - IntegerProperty
+    - typeOfSession - StringProperty
+    - date - DateProperty
+    - highlights - StringProperty(repeated)
 1. Endpoints implemented
     - getConferenceSessions(websafeConferenceKey)
     - getConferenceSessionsByType(websafeConferenceKey, typeOfSession)

@@ -1,6 +1,9 @@
 import endpoints
 from datetime import datetime
 from lib.models import SessionForm
+from .speaker import copySpeakerToForm
+
+
 
 def getSessionData(request):
     if not request.name:
@@ -10,7 +13,7 @@ def getSessionData(request):
     del data["websafeKey"]
 
     if data['date']:
-        data['date'] = datetime.strptime(data['startDate'][:10], "%Y-%m-%d").date()
+        data['date'] = datetime.strptime(data['date'][:10], "%Y-%m-%d").date()
 
     return data
 
@@ -18,11 +21,15 @@ def getSessionData(request):
 def copySessionToForm(session):
     sess_form = SessionForm()
     for field in sess_form.all_fields():
-        if hasattr(session, field.name):
-            value = getattr(session, field.name)
-            setattr(sess_form, field.name, value)
+        if field.name == 'date':
+            setattr(sess_form, field.name, str(getattr(sess_form, field.name)))
         elif field.name == "websafeKey":
             setattr(sess_form, field.name, session.key.urlsafe())
+        elif field.name == "speaker":
+            setattr(sess_form, field.name, copySpeakerToForm(session.speaker))
+        elif hasattr(session, field.name):
+            value = getattr(session, field.name)
+            setattr(sess_form, field.name, value)
 
     return sess_form
 

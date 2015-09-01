@@ -58,6 +58,7 @@ class ConferenceApi(remote.Service):
         queries.create_conference(user_id, data)
         taskqueue.add(params={'email': user.email(), 'conferenceInfo': repr(response)},
                       url='/tasks/send_confirmation_email')
+
         return response
 
 
@@ -170,10 +171,12 @@ class ConferenceApi(remote.Service):
     def createSession(self, user, request):
         """Create Session."""
         user_id = getUserId(user)
-        queries.get_user_conference(user_id, request.websafeConferenceKey)
+        wsck = request.websafeConferenceKey
+        queries.get_user_conference(user_id, wsck)
         data = utils.getSessionData(request)
-        session = queries.create_session(data, request.websafeConferenceKey)
-        queries.set_memcache(request.websafeConferenceKey, session.speaker)
+        session = queries.create_session(data, wsck)
+        taskqueue.add(params={'speaker': session.speaker.name, "wsck": wsck},
+                      url='/tasks/set_featured_speaker')
 
         return utils.copySessionToForm(session)
 

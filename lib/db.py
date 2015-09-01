@@ -25,10 +25,16 @@ class Conference(ndb.Model):
     sessions = ndb.StringProperty(repeated=True)
 
 
+class Speaker(ndb.Model):
+    name = ndb.StringProperty(required=True)
+    age = ndb.IntegerProperty()
+    specialization = ndb.StringProperty()
+
+
 class Session(ndb.Model):
     """Session -- Session object"""
     name = ndb.StringProperty(required=True)
-    speaker = ndb.StringProperty()
+    speaker = ndb.StructuredProperty(Speaker)
     websafeConferenceKey = ndb.StringProperty()
     startTime = ndb.IntegerProperty()
     duration = ndb.IntegerProperty()

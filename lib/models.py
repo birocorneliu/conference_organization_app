@@ -92,9 +92,15 @@ class SpeakerMessage(messages.Message):
     speaker = messages.StringField(1, required=True)
 
 
+class SpeakerForm(messages.Message):
+    name = messages.StringField(1, required=True)
+    age = messages.IntegerField(2)
+    specialization = messages.StringField(3)
+
+
 class SessionForm(messages.Message):
     name = messages.StringField(1, required=True)
-    speaker = messages.StringField(2)
+    speaker = messages.MessageField(SpeakerForm, 2, required=True)
     startTime = messages.IntegerField(3)
     duration = messages.IntegerField(4)
     typeOfSession = messages.StringField(5)
